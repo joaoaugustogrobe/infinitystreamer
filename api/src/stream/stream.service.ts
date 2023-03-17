@@ -4,19 +4,16 @@ import { CreateStreamDto } from './dto/create-stream.dto';
 import { Stream } from './entities/stream.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-import {
-  VideoTimeline,
-  AudioTimeline,
-} from 'src/timeline/entities/timeline.entity';
+import { TrackService } from '../track/track.service';
+import { CreateInitialTrackDto } from '../track/dto/create-initial-track.dto';
+import { TimelineService } from 'src/timeline/timeline.service';
 
 @Injectable()
 export class StreamService {
   constructor(
     @InjectRepository(Stream) private streamRepository: Repository<Stream>,
-    @InjectRepository(VideoTimeline)
-    private videoTimelineRepository: Repository<VideoTimeline>,
-    @InjectRepository(AudioTimeline)
-    private audioTimelineRepository: Repository<AudioTimeline>,
+    private readonly timelineService: TimelineService,
+    private readonly trackService: TrackService,
   ) {}
 
   create(createStreamDto: CreateStreamDto): Promise<Stream> {
@@ -26,7 +23,6 @@ export class StreamService {
     });
 
     return this.streamRepository.save(stream);
-    // return 'This action adds a new stream';
   }
 
   async createStreamAndTimelines(
@@ -34,10 +30,15 @@ export class StreamService {
   ): Promise<Stream> {
     const stream = await this.streamRepository.save({ ...createStreamDto });
 
-    await Promise.all([
-      this.videoTimelineRepository.save({}),
-      this.audioTimelineRepository.save({}),
+    const timelines = await Promise.all([
+      this.timelineService.createAudioTimeline(stream),
     ]);
+    const audioTimeline = timelines[0];
+    const initialTrack: CreateInitialTrackDto = {
+      timeline: audioTimeline,
+    };
+
+    await this.trackService.createInitialTrack(initialTrack);
 
     return stream;
   }

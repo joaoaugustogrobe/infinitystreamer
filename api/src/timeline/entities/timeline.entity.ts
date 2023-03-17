@@ -50,7 +50,7 @@ export class VideoTimeline extends Timeline {
 @Entity()
 export abstract class Resource {
   @PrimaryGeneratedColumn()
-  public id: number;
+  id: number;
 
   @Column()
   public title: string;

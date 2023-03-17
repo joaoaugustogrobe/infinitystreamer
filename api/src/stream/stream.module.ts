@@ -3,13 +3,11 @@ import { StreamService } from './stream.service';
 import { StreamController } from './stream.controller';
 import { Stream } from './entities/stream.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import {
-  VideoTimeline,
-  AudioTimeline,
-} from 'src/timeline/entities/timeline.entity';
+import { TrackModule } from '../track/track.module';
+import { TimelineModule } from 'src/timeline/timeline.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Stream, VideoTimeline, AudioTimeline])],
+  imports: [TypeOrmModule.forFeature([Stream]), TrackModule, TimelineModule],
   controllers: [StreamController],
   providers: [StreamService],
 })
