@@ -12,11 +12,15 @@ import { CreateStreamDto } from './dto/create-stream.dto';
 import { UpdateStreamDto } from './dto/update-stream.dto';
 import { ApiTags } from '@nestjs/swagger';
 import { Stream } from './entities/stream.entity';
+import { TimelineService } from 'src/timeline/timeline.service';
 
 @Controller('stream')
 @ApiTags('Stream')
 export class StreamController {
-  constructor(private readonly streamService: StreamService) {}
+  constructor(
+    private readonly streamService: StreamService,
+    private readonly timelineService: TimelineService,
+  ) {}
 
   @Post()
   create(@Body() createStreamDto: CreateStreamDto): Promise<Stream> {

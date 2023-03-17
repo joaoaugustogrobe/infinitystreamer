@@ -4,6 +4,7 @@ import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { StreamModule } from './stream/stream.module';
 import { TimelineModule } from './timeline/timeline.module';
+import { TrackModule } from './track/track.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { TimelineModule } from './timeline/timeline.module';
     }),
     StreamModule,
     TimelineModule,
+    TrackModule,
   ],
   controllers: [AppController],
   providers: [AppService],

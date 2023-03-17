@@ -1,4 +1,5 @@
 import { Stream } from '../../stream/entities/stream.entity';
+// import { Track } from '../../track/entities/track.entity';
 import {
   Entity,
   Column,
@@ -26,8 +27,8 @@ export abstract class Timeline {
 
 @Entity()
 export class AudioTimeline extends Timeline {
-  // @OneToMany(() => Track, (tracks) => tracks.timeline)
-  // public tracks: Track[];
+  @OneToMany(() => Track, (tracks) => tracks.timeline)
+  public tracks: Track[];
 }
 
 // Video handling
@@ -38,6 +39,9 @@ export class VideoTimeline extends Timeline {
 
   @Column({ default: '1920x1080' })
   public resolution: string;
+
+  @Column({ default: '30fps' })
+  public framerate: string;
 
   // @OneToMany(() => Clip, (clip) => clip.timeline)
   // public clips: Clip[];
@@ -55,6 +59,9 @@ export abstract class Resource {
   public duration: number;
 
   @Column()
+  public timelineStartAt: number;
+
+  @Column()
   public thumbnail: string;
 
   @Column()
@@ -67,14 +74,14 @@ export abstract class Resource {
   public resourceOrigin: string;
 }
 
-// @Entity()
-// export class Track extends Resource {
-//   @ManyToOne(() => AudioTimeline, (timeline) => timeline.tracks)
-//   public timeline: AudioTimeline;
+@Entity()
+export class Track extends Resource {
+  @ManyToOne(() => AudioTimeline, (timeline) => timeline.tracks)
+  public timeline: AudioTimeline;
 
-//   @Column({ nullable: true })
-//   public waveform: string;
-// }
+  @Column({ nullable: true })
+  public waveform: string;
+}
 // Clip with VideoTimeline should be n*n, but we are not storing the Clip,
 // we are getting it directly from the provider source.
 // Refactor it in the future. Same for Track and AudioTimeline
