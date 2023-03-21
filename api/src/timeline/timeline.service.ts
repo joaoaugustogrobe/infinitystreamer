@@ -3,6 +3,7 @@ import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { AudioTimeline } from './entities/timeline.entity';
 import { Stream } from 'src/stream/entities/stream.entity';
+import { AddTrackToTimelineDTO } from './dto/add-track-timeline.dto';
 
 @Injectable()
 export class TimelineService {
@@ -18,7 +19,12 @@ export class TimelineService {
     });
   }
 
-  // addTrackToTimeline() {
-  //   return;
-  // }
+  async findAll(): Promise<AudioTimeline[]> {
+    return this.audioTimelineRepository.find({ take: 30, skip: 0 });
+  }
+
+  addTrackToTimeline(payload: AddTrackToTimelineDTO) {
+    console.log(payload);
+    return;
+  }
 }

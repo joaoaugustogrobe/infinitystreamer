@@ -11,7 +11,7 @@ import { Timeline } from '../../timeline/entities/timeline.entity';
 @Entity()
 export class Stream {
   @PrimaryGeneratedColumn()
-  id: number;
+  public id: number;
 
   @Column()
   public title: string;
