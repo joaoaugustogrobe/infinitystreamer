@@ -5,7 +5,7 @@
     <!-- <a href="#"  @click="editStream"> -->
     <RouterLink class="relative" :to="`/stream/${stream.id}`">
 
-      <img class="rounded-t-lg" src="src/assets/img/lofi.jpeg" alt="" />
+      <img class="rounded-t-lg" :src="stream.thumbnailURL" alt="" />
       <span
       v-if="stream.live"
       class="absolute top-2 right-0 bg-red-100 text-red-800 text-xs font-medium inline-flex items-center px-2.5 py-0.5 rounded mr-2"
