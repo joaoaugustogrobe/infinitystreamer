@@ -3,7 +3,7 @@ import { Length } from 'class-validator';
 
 export class AddTrackToTimelineDTO {
   @ApiProperty({
-    description: 'Stream ID',
+    description: 'Track of the ID to be added',
   })
-  public readonly stream: number;
+  public readonly trackId: string;
 }

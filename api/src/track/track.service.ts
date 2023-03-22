@@ -6,6 +6,8 @@ import { CreateInitialTrackDto } from './dto/create-initial-track.dto';
 import { Track } from './entities/track.entity';
 import { TrackProvider } from './interfaces/track-provider.interface.ts';
 import { UpbeatProvider } from './providers/upbeat.provider';
+import { CreateTrackDto } from './dto/create-track.dto';
+import { AudioTimeline } from 'src/timeline/entities/timeline.entity';
 
 @Injectable()
 export class TrackService {
@@ -22,10 +24,24 @@ export class TrackService {
     return this.trackProvider.getTrends();
   }
 
-  // create(createTrackDto: CreateTrackDto): Promise<Track> {
-  //   const track = this.trackRepository.create({});
-  //   return this.trackRepository.save(track);
-  // }
+  async create(
+    timeline: AudioTimeline,
+    createTrackDto: CreateTrackDto,
+  ): Promise<Track> {
+    const track: Track = await this.trackProvider.getNewTrackById(
+      createTrackDto.track,
+    );
+    const trackEntity = this.trackRepository.create({
+      ...track,
+      timeline: timeline,
+      timelineStartAt: createTrackDto.timelineStartAt,
+    });
+    return this.trackRepository.save(trackEntity);
+  }
+
+  async getNewTrackById(id: string) {
+    return this.trackProvider.getNewTrackById(id);
+  }
 
   createInitialTrack(createTrackDto: CreateInitialTrackDto): Promise<Track> {
     const track = this.trackRepository.create({

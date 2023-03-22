@@ -27,9 +27,15 @@ export class TimelineController {
     return this.timelineService.findAll();
   }
 
-  @Post(':id')
+  @Post(':id/add-track')
   @ApiBindId('Timeline id')
-  addTrackToTimeline(@BindParam('id') timeline: AudioTimeline) {
-    console.log('timeline', timeline);
+  addTrackToTimeline(
+    @BindParam('id') timeline: AudioTimeline,
+    @Body() addTrackToTimeline: AddTrackToTimelineDTO,
+  ) {
+    return this.timelineService.addTrackToTimeline(
+      timeline,
+      addTrackToTimeline,
+    );
   }
 }

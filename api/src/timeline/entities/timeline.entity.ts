@@ -15,9 +15,6 @@ export abstract class Timeline {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => Stream, (stream) => stream.timelines)
-  public stream: Stream;
-
   @CreateDateColumn({ name: 'createdAt' })
   public createdAt: Date;
 
@@ -27,8 +24,11 @@ export abstract class Timeline {
 
 @Entity()
 export class AudioTimeline extends Timeline {
-  @OneToMany(() => Track, (tracks) => tracks.timeline)
+  @OneToMany(() => Track, (tracks) => tracks.timeline, { eager: true })
   public tracks: Track[];
+
+  @ManyToOne(() => Stream, (stream) => stream.audioTimelines)
+  public stream: Stream;
 }
 
 // Video handling
@@ -42,6 +42,9 @@ export class VideoTimeline extends Timeline {
 
   @Column({ default: '30fps' })
   public framerate: string;
+
+  @ManyToOne(() => Stream, (stream) => stream.videoTimelines)
+  public stream: Stream;
 
   // @OneToMany(() => Clip, (clip) => clip.timeline)
   // public clips: Clip[];
@@ -76,7 +79,9 @@ export abstract class Resource {
 
 @Entity()
 export class Track extends Resource {
-  @ManyToOne(() => AudioTimeline, (timeline) => timeline.tracks)
+  @ManyToOne(() => AudioTimeline, (timeline) => timeline.tracks, {
+    nullable: true,
+  })
   public timeline: AudioTimeline;
 
   @Column({ nullable: true })

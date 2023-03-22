@@ -6,7 +6,10 @@ import {
   PrimaryGeneratedColumn,
   OneToMany,
 } from 'typeorm';
-import { Timeline } from '../../timeline/entities/timeline.entity';
+import {
+  AudioTimeline,
+  VideoTimeline,
+} from '../../timeline/entities/timeline.entity';
 
 @Entity()
 export class Stream {
@@ -22,8 +25,11 @@ export class Stream {
   @Column({ nullable: true })
   public thumbnailURL: string;
 
-  @OneToMany(() => Timeline, (timeline) => timeline.stream)
-  public timelines: Timeline[];
+  @OneToMany(() => VideoTimeline, (timeline) => timeline.stream)
+  public videoTimelines: VideoTimeline[];
+
+  @OneToMany(() => AudioTimeline, (timeline) => timeline.stream)
+  public audioTimelines: AudioTimeline[];
 
   @CreateDateColumn({ name: 'createdAt' })
   public createdAt: Date;

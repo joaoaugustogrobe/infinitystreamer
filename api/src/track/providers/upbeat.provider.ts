@@ -13,14 +13,38 @@ export class UpbeatProvider implements TrackProvider {
       const tracks: Track[] = data.results.map((item: any) => ({
         id: item.id.toString(),
         title: item.name,
-        duration: item.duration,
+        duration: item.track_url.version_length,
         thumbnail: item.artist.avatar_image.image_aws_url,
-        resourceUrl: item.play_url,
+        resourceUrl: item.track_url.version_preview_uri,
         timelineStartAt: -1,
         artistName: item.artist.name,
         resourceOrigin: 'upbeat',
       }));
       return tracks;
+    } catch (error) {
+      throw new Error(error.message);
+    }
+  }
+
+  async getNewTrackById(id: string): Promise<Track> {
+    const endpoint = `https://fastly.uppbeat.io/api/tracks/soundroll/artists/${id}/track`;
+
+    try {
+      const response = await axios.get(endpoint);
+      const item = response.data;
+      const track: Track = {
+        id: item.id.toString(),
+        title: item.name,
+        duration: item.track_url.version_length,
+        thumbnail: item.artist.avatar_image.image_aws_url,
+        resourceUrl: item.track_url.version_preview_uri,
+        timelineStartAt: -1,
+        artistName: item.artist.name,
+        resourceOrigin: 'upbeat',
+        timeline: null,
+        waveform: item.track_url.waveform_json,
+      };
+      return track;
     } catch (error) {
       throw new Error(error.message);
     }

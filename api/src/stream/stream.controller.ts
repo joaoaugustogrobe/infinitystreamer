@@ -6,6 +6,7 @@ import {
   Patch,
   Param,
   Delete,
+  Query,
 } from '@nestjs/common';
 import { StreamService } from './stream.service';
 import { CreateStreamDto } from './dto/create-stream.dto';
@@ -13,6 +14,8 @@ import { UpdateStreamDto } from './dto/update-stream.dto';
 import { ApiTags } from '@nestjs/swagger';
 import { Stream } from './entities/stream.entity';
 import { TimelineService } from 'src/timeline/timeline.service';
+import { ListQueryDto } from 'src/dto/list-query.dto';
+import { PaginatedList } from 'src/objects/paginated-list.object';
 
 @Controller('stream')
 @ApiTags('Stream')
@@ -28,9 +31,11 @@ export class StreamController {
     return this.streamService.createStreamAndTimelines(createStreamDto);
   }
 
-  @Get()
-  findAll() {
-    return this.streamService.findAll();
+  @Get('all')
+  findAll(
+    @Query() { take, skip }: ListQueryDto,
+  ): Promise<PaginatedList<Stream>> {
+    return this.streamService.findAllPaginated(take, skip);
   }
 
   @Get(':id')

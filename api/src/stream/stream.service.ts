@@ -2,11 +2,13 @@ import { Injectable } from '@nestjs/common';
 import { UpdateStreamDto } from './dto/update-stream.dto';
 import { CreateStreamDto } from './dto/create-stream.dto';
 import { Stream } from './entities/stream.entity';
-import { Repository } from 'typeorm';
+import { createQueryBuilder, getRepository, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { TrackService } from '../track/track.service';
 import { CreateInitialTrackDto } from '../track/dto/create-initial-track.dto';
 import { TimelineService } from 'src/timeline/timeline.service';
+import { PaginatedList } from '../objects/paginated-list.object';
+import { Timeline } from 'src/timeline/entities/timeline.entity';
 
 @Injectable()
 export class StreamService {
@@ -43,12 +45,25 @@ export class StreamService {
     return stream;
   }
 
-  findAll() {
-    return `This action returns all stream`;
+  async findAll(take = 30, skip = 0): Promise<Stream[]> {
+    return await this.streamRepository.find({
+      take,
+      skip,
+    });
+  }
+  async findAllPaginated(take = 30, skip = 0): Promise<PaginatedList<Stream>> {
+    const total = await this.streamRepository.count();
+    const data = await this.findAll(take, skip);
+    console.log('data', data);
+    return new PaginatedList<Stream>(data, total, take, skip);
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} stream`;
+  async findOne(id: number) {
+    const stream = await this.streamRepository.find({
+      where: { id },
+      relations: ['audioTimelines', 'videoTimelines'],
+    });
+    return stream;
   }
 
   update(id: number, updateStreamDto: UpdateStreamDto) {
