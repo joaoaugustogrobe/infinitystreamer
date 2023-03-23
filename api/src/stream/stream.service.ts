@@ -59,7 +59,7 @@ export class StreamService {
   }
 
   async findOne(id: number) {
-    const stream = await this.streamRepository.find({
+    const stream = await this.streamRepository.findOne({
       where: { id },
       relations: ['audioTimelines', 'videoTimelines'],
     });
