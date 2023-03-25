@@ -1,5 +1,8 @@
 <template>
   <div class="w-full h-full">
+    <div class="mb-0.5 pl-28">
+      <TimeRuler/>
+    </div>
     <AudioTimeline v-for="(timeline, index) in audioTimelines" :key="timeline.id" :timeline="timeline" :index="index"/>
   </div>
 </template>
@@ -10,6 +13,7 @@ import { computed } from 'vue'
 import { useStreamStore } from '../../stores';
 import { useRoute } from 'vue-router';
 import AudioTimeline from './AudioTimeline.vue';
+import TimeRuler from './TimeRuler.vue';
 
 defineProps({
   streamId: String,

@@ -1,15 +1,16 @@
 <template>
   <div class="flex w-full h-16">
     <!-- Title -->
-    <div class="bg-gray-800 flex items-center px-4">
+    <div class="bg-gray-800 flex items-center px-4 w-28">
       <span class="text-white">
         Audio {{ index }}
       </span>
       <SpeakerWaveIcon class="ml-1 h-4 w-4 text-white" />
     </div>
     <!-- Timeline Tracks -->
-    <div class="bg-gray-900 grow overflow-auto flex flex-row flex-nowrap gap-0 pl-0.5">
-      <div class="truncate border rounded border-gray-700" :style="{ width: `${track.duration * timelineScale}px`}" v-for="(track, trackIndex) in timeline.tracks" :key="track.id">
+    <div class="bg-gray-900 grow overflow-auto flex flex-row flex-nowrap gap-0">
+      <div class="truncate border rounded border-gray-700 box-border" :style="{ width: `${track.duration}px`}" v-for="(track, trackIndex) in timeline.tracks" :key="track.id">
+        <span>{{ track.duration }}</span>
         <span class="">{{ track.title }}</span>
         <!-- Add waveform in background -->
       </div>
