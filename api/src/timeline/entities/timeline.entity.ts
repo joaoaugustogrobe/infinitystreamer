@@ -8,6 +8,7 @@ import {
   PrimaryGeneratedColumn,
   ManyToOne,
   OneToMany,
+  PrimaryColumn,
 } from 'typeorm';
 
 @Entity()
@@ -52,7 +53,8 @@ export class VideoTimeline extends Timeline {
 
 @Entity()
 export abstract class Resource {
-  @PrimaryGeneratedColumn()
+  // @PrimaryGeneratedColumn()
+  @PrimaryColumn('varchar')
   id: string;
 
   @Column()

@@ -1,6 +1,7 @@
 import { Track } from '../entities/track.entity';
 import { TrackProvider } from '../interfaces/track-provider.interface.ts';
 import axios from 'axios';
+import { NotFoundException } from '@nestjs/common';
 
 export class UpbeatProvider implements TrackProvider {
   async getTrends(): Promise<Track[]> {
@@ -11,7 +12,7 @@ export class UpbeatProvider implements TrackProvider {
       const data = response.data;
 
       const tracks: Track[] = data.results.map((item: any) => ({
-        id: item.id.toString(),
+        id: `upbeat:${item.artist.slug}:${item.slug}`,
         title: item.name,
         duration: item.track_url.version_length,
         thumbnail: item.artist.avatar_image.image_aws_url,
@@ -26,14 +27,21 @@ export class UpbeatProvider implements TrackProvider {
     }
   }
 
-  async getNewTrackById(id: string): Promise<Track> {
-    const endpoint = `https://fastly.uppbeat.io/api/tracks/soundroll/artists/${id}/track`;
+  async getNewTrackById(id: string): Promise<Track | null> {
+    console.log('id', id);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const [_trackProviderName, artist, trackId] = id.split(':');
+    const endpoint = `https://fastly.uppbeat.io/api/tracks/${artist}/artists/${trackId}/track`;
 
     try {
       const response = await axios.get(endpoint);
       const item = response.data;
+      if (!item || item == 'false') {
+        throw new NotFoundException('TEST!');
+      }
+
       const track: Track = {
-        id: item.id.toString(),
+        id: `upbeat:${item.artist.slug}:${item.slug}`,
         title: item.name,
         duration: item.track_url.version_length,
         thumbnail: item.artist.avatar_image.image_aws_url,

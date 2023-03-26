@@ -31,6 +31,10 @@ export class TrackService {
     const track: Track = await this.trackProvider.getNewTrackById(
       createTrackDto.track,
     );
+    if (!track) {
+      throw new NotFoundException('Could not find track id');
+    }
+
     const trackEntity = this.trackRepository.create({
       ...track,
       timeline: timeline,
@@ -45,6 +49,7 @@ export class TrackService {
 
   createInitialTrack(createTrackDto: CreateInitialTrackDto): Promise<Track> {
     const track = this.trackRepository.create({
+      id: 'InfinityStreamer:InfinityStreamer:initial-track',
       timeline: createTrackDto.timeline,
       waveform: '',
       title: 'Welcome',
