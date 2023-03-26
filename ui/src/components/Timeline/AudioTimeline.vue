@@ -9,9 +9,9 @@
     </div>
     <!-- Timeline Tracks -->
     <div class="bg-gray-900 grow overflow-auto flex flex-row flex-nowrap gap-0">
-      <div class="truncate border rounded border-gray-700 box-border" :style="{ width: `${track.duration}px`}" v-for="(track, trackIndex) in timeline.tracks" :key="track.id">
-        <span>{{ track.duration }}</span>
-        <span class="">{{ track.title }}</span>
+      <div class="truncate border rounded border-gray-700 box-border flex items-center gap-2" :style="{ width: `${track.duration}px`}" v-for="track in timeline.tracks" :key="track.id">
+        <img class="w-auto max-h-full rounded-l" :src="track.thumbnail" :alt="track.title">
+        <span class="truncate">{{ track.title }}</span>
         <!-- Add waveform in background -->
       </div>
       <div class="bg-blue-100">
@@ -22,7 +22,7 @@
 </template>
 
 <script setup>
-import { defineProps, computed } from 'vue'
+import { defineProps } from 'vue'
 import { SpeakerWaveIcon } from "@heroicons/vue/24/outline";
 
 
@@ -31,7 +31,7 @@ defineProps({
   index: Number
 })
 
-const timelineScale = computed(() => 3);
+// const timelineScale = computed(() => 3);
 
 </script>
 
