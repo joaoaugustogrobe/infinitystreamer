@@ -1,5 +1,6 @@
 <template>
   <div class="timeline">
+    <div class="playhead transition-all duration-150" :style="{ left: playheadLeftPosition }"></div>
     <div class="flex h-6" ref="timelineElement">
       <span v-for="tick in ticks" :key="tick" class="tick" :data-key="tick" :data-time="(getTickTimestamp(tick))" 
         :style="{ left: getTickLeftPosition(tick) }"
@@ -11,7 +12,10 @@
 <script setup>
 import { ref, computed, onMounted, reactive, defineProps } from 'vue'
 import moment from 'moment';
+import { useStreamStore } from '../../stores';
+
 const timelineElement = ref(null)
+const store = useStreamStore()
 
 const props = defineProps({
   tickResolution: {
@@ -30,6 +34,7 @@ const data = reactive({
 
 const requiredTicks = computed(() => Math.floor(data.width / props.tickResolution));
 const ticks = computed(() => Array.from({length: requiredTicks.value}, (_, i) => i));
+const playheadLeftPosition = computed(() => `${store.getPlayhead}px`);
 
 const getTickTimestamp = (tickIndex) => {
   const tickNumber = tickIndex + 1;
@@ -48,6 +53,7 @@ const getTickLeftPosition = (tickIndex) => {
 <style lang="scss" scoped>
 
 $line-height: 20px;
+$playhead-height: 90px;
 .timeline {
   counter-reset: tick-counter;
   padding-top: $line-height;
@@ -73,5 +79,13 @@ $line-height: 20px;
       font-size: 11px;
     }
   }
+}
+
+.playhead {
+  position: absolute;
+  height: $playhead-height;
+  width: 0;
+  border-left: 1px solid red;
+  z-index: 1;
 }
 </style>

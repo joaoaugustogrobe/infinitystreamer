@@ -35,8 +35,14 @@ const formatTrackDuration = (seconds) => {
   return moment.utc(duration.asMilliseconds()).format('HH:mm:ss');
 }
 
+
+
 const addTrack = (track) => {
+  // Before supporting drag&drop, it will add to the first audioTimeline
   console.log(`Adding '${track.title}' to '${stream.value.title}'`);
+  const timeline = store.getAudioTimelinesByStream(streamId)[0];
+  const res = store.addTrackToTimeline(track.id, timeline.id, stream.value.id);
+  console.log('res', res);
 }
 
 </script>
