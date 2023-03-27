@@ -9,18 +9,19 @@ class InfinityStreamer {
     return this.request(
       'POST',
       endpoint,
-      JSON.stringify(data),
+      data,
       params
     );
   }
 
-  async get(endpoint, params = {}) {
+  async get(endpoint, params = {}, config) {
     // TODO params to endpoint
     return this.request(
       'GET',
       endpoint,
       null,
       params,
+      config,
     );
   }
   

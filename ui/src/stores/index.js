@@ -7,6 +7,7 @@ export const useStreamStore = defineStore('stream', {
     streamMap: {}, // map streamid full object from GET/stream/:id
     client: new InfinityStreamer(),
     trackTrends: [],
+    playhead: 0,
   }),
   getters: {
     getStreams: (state) => state.streams,
@@ -17,6 +18,7 @@ export const useStreamStore = defineStore('stream', {
     getAudioTimelinesByStream: (state) => {
       return (streamId) => state.streamMap[streamId]?.audioTimelines || []
     },
+    getPlayhead: (state) => state.playhead,
   },
   actions: {
     async fetchStreams() {
@@ -36,12 +38,27 @@ export const useStreamStore = defineStore('stream', {
       }
     },
     async fetchTrackTrends() {
-      const res = await this.client.get(`track/trends`);
+      const res = await this.client.get('track/trends');
       if(res.ok) {
         Object.assign(this.trackTrends, res.data)
       } else {
         delete this.streamMap.id;
       }
     },
+    async addTrackToTimeline(trackId, timelineId, streamId) {
+      const res = await this.client.post(`timeline/${timelineId}/add-track`, {
+        trackId
+      });
+      if (res.ok) {
+        await this.fetchStream(streamId);
+      }
+      return res;
+    },
+    async fetchTrackArrayBuffer(url) {
+      return this.client.get('track', { url }, { responseType: 'arraybuffer' });
+    },
+    setPlayhead(time) {
+      this.playhead = time;
+    }
   },
 })
