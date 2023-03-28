@@ -22,7 +22,6 @@ To run InfinityStreamer on your local machine, follow these steps:
 1. Clone the repository: `git clone https://github.com/your-username/infinitystreamer.git`
 2. Run the dabase docker: `docker-compose up -d`
 3. Install the dependencies on /api and /ui: `npm install`
-4. rename the `.env.example` to `.env` on /api
 5. Start the server: `npm run start:dev`
 6. Start the frontend: `npm run dev`
 7. Server runs on `localhost:3000`
