@@ -58,7 +58,7 @@ export class TimelineService {
     const events: number[] = tracks.map((track) => {
       return track.timelineStartAt + track.duration;
     });
-    return Math.max(...events);
+    return events.length ? Math.max(...events) : 0;
   }
 
   // async getTimelineByStream(id: number): Promise<Timeline[]> {
