@@ -1,8 +1,13 @@
 <template>
-  <div class="timeline">
-    <div class="playhead transition-all duration-150" :style="{ left: playheadLeftPosition }"></div>
-    <div class="flex h-6" ref="timelineElement">
-      <span v-for="tick in ticks" :key="tick" class="tick" :data-key="tick" :data-time="(getTickTimestamp(tick))" 
+  <div class="timeline" @click="handlePlayheadMove">
+    <div class="playhead transition-all duration-150 pointer-events-none" :style="{ left: playheadLeftPosition }"></div>
+    <div class="flex h-6 pointer-events-none" ref="timelineElement">
+      <span
+        v-for="tick in ticks"
+        :key="tick"
+        class="tick"
+        :data-key="tick"
+        :data-time="getTickTimestamp(tick)"
         :style="{ left: getTickLeftPosition(tick) }"
       ></span>
     </div>
@@ -11,8 +16,8 @@
 
 <script setup>
 import { ref, computed, onMounted, reactive, defineProps } from 'vue'
-import moment from 'moment';
-import { useStreamStore } from '../../stores';
+import moment from 'moment'
+import { useStreamStore } from '../../stores'
 
 const timelineElement = ref(null)
 const store = useStreamStore()
@@ -20,38 +25,43 @@ const store = useStreamStore()
 const props = defineProps({
   tickResolution: {
     type: Number,
-    default: () => 10, // in seconds
+    default: () => 10 // in seconds
   }
-});
+})
 
 onMounted(() => {
   data.width = timelineElement.value.clientWidth
 })
 
 const data = reactive({
-  width: 0,
-});
+  width: 0
+})
 
-const requiredTicks = computed(() => Math.floor(data.width / props.tickResolution));
-const ticks = computed(() => Array.from({length: requiredTicks.value}, (_, i) => i));
-const playheadLeftPosition = computed(() => `${store.getPlayhead}px`);
+const requiredTicks = computed(() => Math.floor(data.width / props.tickResolution))
+const ticks = computed(() => Array.from({ length: requiredTicks.value }, (_, i) => i))
+const playheadLeftPosition = computed(() => `${store.getPlayhead}px`)
 
 const getTickTimestamp = (tickIndex) => {
-  const tickNumber = tickIndex + 1;
-  const seconds = tickNumber * props.tickResolution;
+  const tickNumber = tickIndex + 1
+  const seconds = tickNumber * props.tickResolution
   // return seconds;
-  const duration = moment.duration(seconds, 'seconds');
-  return moment.utc(duration.asMilliseconds()).format('HH:mm:ss');
+  const duration = moment.duration(seconds, 'seconds')
+  return moment.utc(duration.asMilliseconds()).format('HH:mm:ss')
 }
 const getTickLeftPosition = (tickIndex) => {
-  const tickNumber = tickIndex + 1;
+  const tickNumber = tickIndex + 1
   return `${tickNumber * 10}px`
 }
 
+const handlePlayheadMove = (event) => {
+  const rect = event.target.getBoundingClientRect();
+  const x = event.clientX - rect.left;
+  console.log('movePlayhead', x);
+  store.movePlayhead(x);
+}
 </script>
 
 <style lang="scss" scoped>
-
 $line-height: 20px;
 $playhead-height: 90px;
 .timeline {
