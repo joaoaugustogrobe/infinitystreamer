@@ -8,14 +8,14 @@
       <SpeakerWaveIcon class="ml-1 h-4 w-4 text-white" />
     </div>
     <!-- Timeline Tracks -->
-    <div class="bg-gray-900 grow overflow-auto flex flex-row flex-nowrap gap-0">
+    <div class="bg-gray-900 grow overflow-auto flex flex-row flex-nowrap gap-0 relative">
       <!-- <input id="audio_file" type="file" accept="audio/*" @change="onFileLoad"/> -->
       <!-- <audio id="audio_player" /> -->
       <div
         v-for="track in timeline.tracks" 
-        class="truncate border rounded border-gray-700 box-border flex items-center gap-2"
+        class="truncate border rounded border-gray-700 box-border flex items-center gap-2 absolute h-full"
         :class="{'border-indigo-500': store.isTrackDecoded(track.id)}"
-        :style="{ width: `${track.duration}px`}" 
+        :style="{ width: getTrackWidth(track), left: getTrackLeftPosition(track) }"
         :key="track.id"
       >
         <img class="w-auto max-h-full rounded-l" :src="track.thumbnail" :alt="track.title">
@@ -39,6 +39,13 @@ defineProps({
   timeline: Object,
   index: Number
 })
+
+function getTrackWidth(track) {
+  return `${track.duration}px`;
+}
+function getTrackLeftPosition(track) {
+  return `${track.timelineStartAt}px`
+}
 
 </script>
 
