@@ -15,9 +15,10 @@ export const useStreamStore = defineStore('stream', {
     playing: false,
     audioContext: null,
     trackArrayBuffer: {}, // by id - We need to manage memory really well for this
+    trackSourceLoadedMap: {},
     trackFetchQueue: null,
     minBufferSize: 30, // App will load chuncks of at least 30 seconds
-    // bufferCheckInterval: 10, // TODO - Interval for checking if current buffer size is long enough
+    bufferCheckInterval: 5, // TODO - Interval for checking if current buffer size is long enough
   }),
   getters: {
     getStreams: (state) => state.streams,
@@ -32,10 +33,13 @@ export const useStreamStore = defineStore('stream', {
     isPlaying: (state) => state.playing,
     getStream: (state) => state.streamMap[state.currentStreamId] || {},
     getTrackArrayBuffer: (state) => {
-      return (trackId) => state.trackArrayBuffer[trackId] || null
+      return (trackId) => state.trackArrayBuffer[trackId] || null;
     },
     isTrackDecoded: (state) => {
-      return (trackId) => !!state.trackArrayBuffer[trackId]
+      return (trackId) => !!state.trackArrayBuffer[trackId];
+    },
+    isTrackSourceLoaded: (state) => {
+      return (trackId) => !!state.trackSourceLoadedMap[trackId];
     }
   },
   actions: {
@@ -116,13 +120,14 @@ export const useStreamStore = defineStore('stream', {
           this.setPlayhead(this.audioContext?.currentTime || 0);
         }, 32); // 30 fps
 
-        // setInterval(() => {
-        //   this.loadBufferChunck();
-        // }, this.bufferCheckInterval * 1000);
+        setInterval(() => {
+          this.loadBufferChunck();
+        }, this.bufferCheckInterval * 1000);
       }
       if (this.audioContext) {
         this.audioContext.suspend();
         await this.audioContext.close();
+        Object.assign(this.trackSourceLoadedMap, {});
       }
       this.audioContext = new AudioContext();
       this.audioContext.suspend();
@@ -142,8 +147,9 @@ export const useStreamStore = defineStore('stream', {
           _offset: offset,
         }
       });
-
-      const tracksToBuffer = tracks.filter((track) => track._start < this.minBufferSize)
+      let tracksToBuffer = tracks.filter((track) =>  + track._start < this.minBufferSize + this.getPlayhead)
+      // console.log('buffering until', this.playhead + track._start);
+      console.log('tracksToBuffer', tracksToBuffer);
       const trackFetchQueue = priorityQueue(async (task, callback) => {
         await task();
         callback(true);
@@ -158,7 +164,10 @@ export const useStreamStore = defineStore('stream', {
 
       await trackFetchQueue.drain();
 
-      await parallel(tracksToBuffer.map(track => {
+      // Ignore tracks already loaded
+      const tracksToLoad = tracksToBuffer.filter(track => !this.isTrackSourceLoaded(track.id));
+
+      await parallel(tracksToLoad.map(track => {
         return async () => await this.pushTrackToContext(track, track._start, track._offset);
       }));
     },
@@ -176,6 +185,7 @@ export const useStreamStore = defineStore('stream', {
       const audioBuffer = await this.audioContext.decodeAudioData(arraybuffer.slice(0));
       audioSource.buffer = audioBuffer;
       audioSource.connect(this.audioContext.destination);
+      Object.assign(this.trackSourceLoadedMap, {[track.id]: true});
 
       audioSource.start(trackInit, trackOffset);
     },
