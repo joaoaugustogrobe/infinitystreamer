@@ -117,8 +117,10 @@ export const useStreamStore = defineStore('stream', {
     async loadAudioContext() {
       if (!this.audioContext) {
         setInterval(() => {
-          this.setPlayhead(this.audioContext?.currentTime || 0);
-        }, 32); // 30 fps
+          if (this.audioContext?.currentTime !== this.audioContextPlayhead) {
+            this.setPlayhead(this.audioContext?.currentTime || 0);
+          }
+        }, 1000);
 
         setInterval(() => {
           this.loadBufferChunck();
@@ -147,7 +149,7 @@ export const useStreamStore = defineStore('stream', {
           _offset: offset,
         }
       });
-      let tracksToBuffer = tracks.filter((track) =>  + track._start < this.minBufferSize + this.getPlayhead)
+      let tracksToBuffer = tracks.filter((track) =>  + track._start < this.minBufferSize + this.audioContextPlayhead)
       // console.log('buffering until', this.playhead + track._start);
       console.log('tracksToBuffer', tracksToBuffer);
       const trackFetchQueue = priorityQueue(async (task, callback) => {

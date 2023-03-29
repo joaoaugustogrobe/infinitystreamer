@@ -1,6 +1,6 @@
 <template>
   <div class="timeline" @click="handlePlayheadMove">
-    <div class="playhead transition-all duration-150 pointer-events-none" :style="{ left: playheadLeftPosition }"></div>
+    <div class="playhead transition-all ease-linear duration-1000 pointer-events-none" :style="{ left: playheadLeftPosition }"></div>
     <div class="flex h-6 pointer-events-none" ref="timelineElement">
       <span
         v-for="tick in ticks"
@@ -56,7 +56,6 @@ const getTickLeftPosition = (tickIndex) => {
 const handlePlayheadMove = (event) => {
   const rect = event.target.getBoundingClientRect();
   const x = event.clientX - rect.left;
-  console.log('movePlayhead', x);
   store.movePlayhead(x);
 }
 </script>
