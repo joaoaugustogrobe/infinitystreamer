@@ -111,7 +111,7 @@ export const useStreamStore = defineStore('stream', {
     },
     pauseReprodution() {
       this.playing = false;
-      this.audioContext.suspend();
+      this.audioContext?.suspend();
       // handle audioContext
     },
     async loadAudioContext() {
