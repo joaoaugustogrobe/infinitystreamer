@@ -1,11 +1,11 @@
 <template>
   <div
-    class="max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700"
+    class="max-w-sm h-fit bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 w-full"
   >
     <!-- <a href="#"  @click="editStream"> -->
     <RouterLink class="relative" :to="`/stream/${stream.id}`">
 
-      <img class="rounded-t-lg" :src="stream.thumbnailURL" alt="" />
+      <img class="rounded-t-lg w-full" src="https://t4.ftcdn.net/jpg/04/14/84/01/360_F_414840163_zuiXS6MoUduwiEWsuEe7kpsDKrhDaPYQ.jpg" alt="" />
       <span
       v-if="stream.live"
       class="absolute top-2 right-0 bg-red-100 text-red-800 text-xs font-medium inline-flex items-center px-2.5 py-0.5 rounded mr-2"
