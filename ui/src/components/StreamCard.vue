@@ -2,7 +2,6 @@
   <div
     class="max-w-sm h-fit bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 w-full"
   >
-    <!-- <a href="#"  @click="editStream"> -->
     <RouterLink class="relative" :to="`/stream/${stream.id}`">
 
       <img class="rounded-t-lg w-full" src="https://t4.ftcdn.net/jpg/04/14/84/01/360_F_414840163_zuiXS6MoUduwiEWsuEe7kpsDKrhDaPYQ.jpg" alt="" />
@@ -15,11 +14,11 @@
       </span>
     </RouterLink>
     <div class="p-5">
-      <a href="#">
+      <RouterLink :to="`/stream/${stream.id}`">
         <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white truncate">
           {{ stream.title }}
         </h5>
-      </a>
+      </RouterLink>
       <p class="mb-3 font-normal text-gray-700 dark:text-gray-400 h-12 overflow-hidden text-o">
         {{ stream.description }}
       </p>
@@ -52,7 +51,10 @@ import { EyeIcon } from '@heroicons/vue/24/solid'
 import { defineProps } from 'vue'
 import { useRouter, RouterLink } from 'vue-router'
 
-defineProps({
+const router = useRouter()
+
+
+const props = defineProps({
   stream: {
     type: Object,
     required: true,
@@ -69,9 +71,6 @@ defineProps({
 })
 
 function editStream(){
-  const router = useRouter()
-  console.log('route', router);
-
-  router.push({ name: 'stream', params: { id: this.stream.id } })
+  router.push(`stream/${props.stream.id}`);
 }
 </script>
