@@ -134,10 +134,7 @@ export const useStreamStore = defineStore('stream', {
       this.audioContext = new AudioContext();
       this.audioContext.suspend();
     },
-    async loadBufferChunck() {
-      console.log('loadBufferChunck');
-      // await this.loadAudioContext();
-
+    async loadBufferChunck(force = false) {
       const allTracks = this.getStream.audioTimelines[0].tracks;
       const playhead = this.getPlayhead;
       let tracks = getRemainingTracks(allTracks, playhead);
@@ -150,8 +147,7 @@ export const useStreamStore = defineStore('stream', {
         }
       });
       let tracksToBuffer = tracks.filter((track) =>  + track._start < this.minBufferSize + this.audioContextPlayhead)
-      // console.log('buffering until', this.playhead + track._start);
-      console.log('tracksToBuffer', tracksToBuffer);
+      
       const trackFetchQueue = priorityQueue(async (task, callback) => {
         await task();
         callback(true);
@@ -167,7 +163,7 @@ export const useStreamStore = defineStore('stream', {
       await trackFetchQueue.drain();
 
       // Ignore tracks already loaded
-      const tracksToLoad = tracksToBuffer.filter(track => !this.isTrackSourceLoaded(track.id));
+      const tracksToLoad = force ? tracksToBuffer : tracksToBuffer.filter(track => !this.isTrackSourceLoaded(track.id));
 
       await parallel(tracksToLoad.map(track => {
         return async () => await this.pushTrackToContext(track, track._start, track._offset);
@@ -195,7 +191,7 @@ export const useStreamStore = defineStore('stream', {
       this.setPlayheadOffset(to);
 
       await this.loadAudioContext();
-      await this.loadBufferChunck();
+      await this.loadBufferChunck(true);
       if (this.playing) {
         this.audioContext.resume();
       }
