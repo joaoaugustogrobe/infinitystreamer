@@ -33,10 +33,6 @@ import { useRoute } from 'vue-router'
 
 import { PlayIcon, ForwardIcon, BackwardIcon, PauseIcon } from '@heroicons/vue/24/solid'
 
-defineProps({
-  streamId: String
-})
-
 const store = useStreamStore()
 const route = useRoute()
 
